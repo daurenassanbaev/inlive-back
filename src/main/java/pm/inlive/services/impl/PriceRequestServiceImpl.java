@@ -1,0 +1,227 @@
+package pm.inlive.services.impl;
+
+import pm.inlive.dto.request.PriceRequestClientResponseRequest;
+import pm.inlive.dto.request.PriceRequestCreateRequest;
+import pm.inlive.dto.request.PriceRequestUpdateRequest;
+import pm.inlive.dto.response.PriceRequestResponse;
+import pm.inlive.entities.AccSearchRequest;
+import pm.inlive.entities.AccommodationUnit;
+import pm.inlive.entities.PriceRequest;
+import pm.inlive.entities.Reservation;
+import pm.inlive.entities.enums.ClientResponseStatus;
+import pm.inlive.entities.enums.PriceRequestStatus;
+import pm.inlive.entities.enums.ReservationStatus;
+import pm.inlive.entities.enums.SearchRequestStatus;
+import pm.inlive.exceptions.DbObjectNotFoundException;
+import pm.inlive.mappers.PriceRequestMapper;
+import pm.inlive.repositories.AccSearchRequestRepository;
+import pm.inlive.repositories.AccommodationUnitRepository;
+import pm.inlive.repositories.PriceRequestRepository;
+import pm.inlive.repositories.ReservationRepository;
+import pm.inlive.services.PriceRequestService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class PriceRequestServiceImpl implements PriceRequestService {
+
+    private final PriceRequestRepository priceRequestRepository;
+    private final AccSearchRequestRepository accSearchRequestRepository;
+    private final AccommodationUnitRepository accommodationUnitRepository;
+    private final PriceRequestMapper priceRequestMapper;
+    private final ReservationRepository reservationRepository;
+    private final MessageSource messageSource;
+
+    @Override
+    @Transactional
+    public void createPriceRequest(PriceRequestCreateRequest request) {
+        log.info("Creating price request for search request: {} and unit: {}",
+                request.getSearchRequestId(), request.getAccommodationUnitId());
+
+        AccSearchRequest searchRequest = accSearchRequestRepository
+                .findByIdAndIsDeletedFalse(request.getSearchRequestId())
+                .orElseThrow(() -> new DbObjectNotFoundException(HttpStatus.NOT_FOUND,
+                        "SEARCH_REQUEST_NOT_FOUND",
+                        messageSource.getMessage("services.priceRequest.searchRequestNotFound", 
+                                new Object[]{request.getSearchRequestId()}, LocaleContextHolder.getLocale())));
+
+        AccommodationUnit unit = accommodationUnitRepository
+                .findByIdAndIsDeletedFalse(request.getAccommodationUnitId())
+                .orElseThrow(() -> new DbObjectNotFoundException(HttpStatus.NOT_FOUND,
+                        "ACCOMMODATION_UNIT_NOT_FOUND",
+                        messageSource.getMessage("services.priceRequest.accommodationUnitNotFound", 
+                                new Object[]{request.getAccommodationUnitId()}, LocaleContextHolder.getLocale())));
+
+        if (priceRequestRepository.existsBySearchRequestIdAndUnitId(
+                request.getSearchRequestId(), request.getAccommodationUnitId())) {
+            throw new DbObjectNotFoundException(HttpStatus.BAD_REQUEST,
+                    "PRICE_REQUEST_ALREADY_EXISTS",
+                    messageSource.getMessage("services.priceRequest.alreadyExists", null, LocaleContextHolder.getLocale()));
+        }
+
+        PriceRequest priceRequest = priceRequestMapper.toEntity(request);
+        priceRequest.setSearchRequest(searchRequest);
+        priceRequest.setUnit(unit);
+        priceRequest.setStatus(PriceRequestStatus.ACCEPTED);
+        priceRequest.setClientResponseStatus(ClientResponseStatus.WAITING);
+
+        searchRequest.setStatus(SearchRequestStatus.PRICE_REQUEST_PENDING);
+        accSearchRequestRepository.save(searchRequest);
+
+        priceRequestRepository.save(priceRequest);
+        log.info("Successfully created price request with ID: {}", priceRequest.getId());
+    }
+
+    @Override
+    @Transactional
+    public void updatePriceRequest(Long priceRequestId, PriceRequestUpdateRequest request) {
+        log.info("Updating price request: {} with status: {} and price: {}",
+                priceRequestId, request.getStatus(), request.getPrice());
+
+        PriceRequest priceRequest = priceRequestRepository.findByIdAndIsDeletedFalse(priceRequestId)
+                .orElseThrow(() -> new DbObjectNotFoundException(HttpStatus.NOT_FOUND,
+                        "PRICE_REQUEST_NOT_FOUND",
+                        messageSource.getMessage("services.priceRequest.notFound", 
+                                new Object[]{priceRequestId}, LocaleContextHolder.getLocale())));
+
+        if (request.getStatus() != null) {
+            priceRequest.setStatus(request.getStatus());
+        }
+        priceRequest.setPrice(request.getPrice());
+
+        priceRequest.setClientResponseStatus(ClientResponseStatus.WAITING);
+
+        priceRequestRepository.save(priceRequest);
+        log.info("Successfully updated price request with ID: {}", priceRequestId);
+    }
+
+    @Override
+    @Transactional
+    public void hidePriceRequest(Long priceRequestId) {
+        log.info("Hiding price request with ID: {}", priceRequestId);
+
+        PriceRequest priceRequest = priceRequestRepository.findByIdAndIsDeletedFalse(priceRequestId)
+                .orElseThrow(() -> new DbObjectNotFoundException(HttpStatus.NOT_FOUND,
+                        "PRICE_REQUEST_NOT_FOUND",
+                        messageSource.getMessage("services.priceRequest.notFound", 
+                                new Object[]{priceRequestId}, LocaleContextHolder.getLocale())));
+
+        priceRequest.softDelete();
+        priceRequestRepository.save(priceRequest);
+
+        log.info("Successfully hidden price request with ID: {}", priceRequestId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PriceRequestResponse getPriceRequestById(Long id) {
+        log.info("Fetching price request by ID: {}", id);
+
+        PriceRequest priceRequest = priceRequestRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> new DbObjectNotFoundException(HttpStatus.NOT_FOUND,
+                        "PRICE_REQUEST_NOT_FOUND",
+                        "Price request not found with ID: " + id));
+
+        return priceRequestMapper.toDto(priceRequest);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PriceRequestResponse> getPriceRequestsByUnitId(Long unitId, Pageable pageable) {
+        log.info("Fetching price requests for unit: {}", unitId);
+
+        accommodationUnitRepository.findByIdAndIsDeletedFalse(unitId)
+                .orElseThrow(() -> new DbObjectNotFoundException(HttpStatus.NOT_FOUND,
+                        "ACCOMMODATION_UNIT_NOT_FOUND",
+                        messageSource.getMessage("services.priceRequest.accommodationUnitNotFound", 
+                                new Object[]{unitId}, LocaleContextHolder.getLocale())));
+
+        Page<PriceRequest> priceRequests = priceRequestRepository.findActiveByUnitId(unitId, pageable);
+        return priceRequests.map(priceRequestMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PriceRequestResponse> getPriceRequestsBySearchRequestId(Long searchRequestId, Pageable pageable) {
+        log.info("Fetching price requests for search request: {}", searchRequestId);
+
+        accSearchRequestRepository.findByIdAndIsDeletedFalse(searchRequestId)
+                .orElseThrow(() -> new DbObjectNotFoundException(HttpStatus.NOT_FOUND,
+                        "SEARCH_REQUEST_NOT_FOUND",
+                        messageSource.getMessage("services.priceRequest.searchRequestNotFound", 
+                                new Object[]{searchRequestId}, LocaleContextHolder.getLocale())));
+
+        Page<PriceRequest> priceRequests = priceRequestRepository
+                .findActiveBySearchRequestId(searchRequestId, pageable);
+        return priceRequests.map(priceRequestMapper::toDto);
+    }
+
+    @Override
+    @Transactional
+    public void respondToPriceRequest(Long priceRequestId, PriceRequestClientResponseRequest request, String clientId) {
+        log.info("Client {} responding to price request {} with status: {}",
+                clientId, priceRequestId, request.getClientResponseStatus());
+
+        PriceRequest priceRequest = priceRequestRepository.findByIdAndIsDeletedFalse(priceRequestId)
+                .orElseThrow(() -> new DbObjectNotFoundException(HttpStatus.NOT_FOUND,
+                        "PRICE_REQUEST_NOT_FOUND",
+                        messageSource.getMessage("services.priceRequest.notFound", 
+                                new Object[]{priceRequestId}, LocaleContextHolder.getLocale())));
+
+        AccSearchRequest searchRequest = priceRequest.getSearchRequest();
+        if (!searchRequest.getAuthor().getKeycloakId().equals(clientId)) {
+            throw new DbObjectNotFoundException(HttpStatus.FORBIDDEN,
+                    "ACCESS_DENIED",
+                    messageSource.getMessage("services.priceRequest.accessDenied", null, LocaleContextHolder.getLocale()));
+        }
+
+        if (priceRequest.getClientResponseStatus() != ClientResponseStatus.WAITING) {
+            throw new DbObjectNotFoundException(HttpStatus.BAD_REQUEST,
+                    "ALREADY_RESPONDED",
+                    messageSource.getMessage("services.priceRequest.alreadyResponded", 
+                            new Object[]{priceRequest.getClientResponseStatus()}, LocaleContextHolder.getLocale()));
+        }
+
+        if (request.getClientResponseStatus() != ClientResponseStatus.ACCEPTED &&
+                request.getClientResponseStatus() != ClientResponseStatus.REJECTED) {
+            throw new DbObjectNotFoundException(HttpStatus.BAD_REQUEST,
+                    "INVALID_RESPONSE_STATUS",
+                    messageSource.getMessage("services.priceRequest.invalidResponseStatus", null, LocaleContextHolder.getLocale()));
+        }
+
+        priceRequest.setClientResponseStatus(request.getClientResponseStatus());
+
+        if (request.getClientResponseStatus() == ClientResponseStatus.ACCEPTED) {
+            if (reservationRepository.existsByPriceRequestId(priceRequestId)) {
+                log.warn("Reservation already exists for price request {}", priceRequestId);
+            } else {
+                Reservation reservation = new Reservation();
+                reservation.setPriceRequest(priceRequest);
+                reservation.setUnit(priceRequest.getUnit());
+                reservation.setSearchRequest(searchRequest);
+                reservation.setApprovedBy(searchRequest.getAuthor());
+                reservation.setStatus(ReservationStatus.WAITING_TO_APPROVE);
+                reservation.setNeedToPay(false);
+
+                reservationRepository.save(reservation);
+                log.info("Automatically created reservation with status WAITING_TO_APPROVE for price request {}", priceRequestId);
+            }
+
+            searchRequest.setStatus(SearchRequestStatus.WAIT_TO_RESERVATION);
+            accSearchRequestRepository.save(searchRequest);
+            log.info("Search request {} status updated to WAIT_TO_RESERVATION", searchRequest.getId());
+        }
+
+        priceRequestRepository.save(priceRequest);
+        log.info("Successfully processed client response for price request {}", priceRequestId);
+    }
+}
