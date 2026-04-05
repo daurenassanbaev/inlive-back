@@ -16,7 +16,7 @@ import pm.inlive.mappers.ImageMapper;
 import ai.lab.inlive.repositories.*;
 import pm.inlive.repositories.*;
 import pm.inlive.services.AccommodationService;
-import ai.lab.inlivefilemanager.client.api.FileManagerApi;
+import pm.inlivefilemanager.client.api.FileManagerApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
