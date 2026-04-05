@@ -1,6 +1,6 @@
-package ai.lab.inlivefilemanager.client.service;
+package pm.inlivefilemanager.client.service;
 
-import ai.lab.inlivefilemanager.client.dto.KeycloakTokenResponse;
+import pm.inlivefilemanager.client.dto.KeycloakTokenResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;

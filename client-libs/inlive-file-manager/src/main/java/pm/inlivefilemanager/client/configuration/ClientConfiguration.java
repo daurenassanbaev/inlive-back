@@ -1,6 +1,6 @@
-package ai.lab.inlivefilemanager.client.configuration;
+package pm.inlivefilemanager.client.configuration;
 
-import ai.lab.inlivefilemanager.client.service.KeycloakAuthService;
+import pm.inlivefilemanager.client.service.KeycloakAuthService;
 import feign.RequestInterceptor;
 import feign.codec.Encoder;
 import feign.form.spring.SpringFormEncoder;

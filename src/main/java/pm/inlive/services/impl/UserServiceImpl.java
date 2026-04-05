@@ -11,7 +11,7 @@ import pm.inlive.security.keycloak.KeycloakBaseUser;
 import pm.inlive.security.keycloak.KeycloakRole;
 import pm.inlive.services.KeycloakService;
 import pm.inlive.services.UserService;
-import ai.lab.inlivefilemanager.client.api.FileManagerApi;
+import pm.inlivefilemanager.client.api.FileManagerApi;
 import jakarta.persistence.EntityManager;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;

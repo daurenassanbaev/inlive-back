@@ -1,6 +1,6 @@
-package ai.lab.inlivefilemanager.client.api;
+package pm.inlivefilemanager.client.api;
 
-import ai.lab.inlivefilemanager.client.configuration.ClientConfiguration;
+import pm.inlivefilemanager.client.configuration.ClientConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

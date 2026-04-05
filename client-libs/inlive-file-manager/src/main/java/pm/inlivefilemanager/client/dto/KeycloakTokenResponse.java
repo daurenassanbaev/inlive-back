@@ -1,4 +1,4 @@
-package ai.lab.inlivefilemanager.client.dto;
+package pm.inlivefilemanager.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
