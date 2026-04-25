@@ -5,7 +5,6 @@ import pm.inlive.dto.request.AccommodationUnitCreateRequest;
 import pm.inlive.dto.response.AccUnitTariffResponse;
 import pm.inlive.dto.response.AccommodationUnitResponse;
 import pm.inlive.dto.response.DictionaryResponse;
-import ai.lab.inlive.entities.*;
 import pm.inlive.entities.*;
 import pm.inlive.entities.enums.DictionaryKey;
 import org.mapstruct.Mapper;
@@ -44,8 +43,8 @@ public interface AccommodationUnitMapper {
 
     @Mapping(target = "accommodationId", source = "unit.accommodation.id")
     @Mapping(target = "unitType", expression = "java(unit.getUnitType() != null ? unit.getUnitType().name() : null)")
-    @Mapping(target = "services", expression = "java(extractDictionariesByKey(unit, ai.lab.inlive.entities.enums.DictionaryKey.ACC_SERVICE))")
-    @Mapping(target = "conditions", expression = "java(extractDictionariesByKey(unit, ai.lab.inlive.entities.enums.DictionaryKey.ACC_CONDITION))")
+    @Mapping(target = "services", expression = "java(extractDictionariesByKey(unit, pm.inlive.entities.enums.DictionaryKey.ACC_SERVICE))")
+    @Mapping(target = "conditions", expression = "java(extractDictionariesByKey(unit, pm.inlive.entities.enums.DictionaryKey.ACC_CONDITION))")
     @Mapping(target = "tariffs", expression = "java(mapTariffs(unit))")
     @Mapping(target = "imageUrls", expression = "java(imageMapper.getPathToAccommodationUnitImages(unit))")
     AccommodationUnitResponse toDto(AccommodationUnit unit, ImageMapper imageMapper);

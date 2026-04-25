@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@EnableFeignClients(basePackages = "ai.lab.inlivefilemanager.client.api")
+@EnableFeignClients(basePackages = "pm.inlivefilemanager.client.api")
 @EnableScheduling
 public class InliveApplication {
 

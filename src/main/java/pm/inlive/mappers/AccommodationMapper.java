@@ -3,7 +3,6 @@ package pm.inlive.mappers;
 import pm.inlive.dto.request.AccommodationCreateRequest;
 import pm.inlive.dto.response.AccommodationResponse;
 import pm.inlive.dto.response.DictionaryResponse;
-import ai.lab.inlive.entities.*;
 import pm.inlive.entities.AccDictionary;
 import pm.inlive.entities.AccImages;
 import pm.inlive.entities.Accommodation;
@@ -23,8 +22,8 @@ public interface AccommodationMapper {
     @Mapping(target = "cityName", source = "accommodation.city.name")
     @Mapping(target = "districtId", source = "accommodation.district.id")
     @Mapping(target = "districtName", source = "accommodation.district.name")
-    @Mapping(target = "services", expression = "java(extractDictionariesByKey(accommodation, ai.lab.inlive.entities.enums.DictionaryKey.ACC_SERVICE))")
-    @Mapping(target = "conditions", expression = "java(extractDictionariesByKey(accommodation, ai.lab.inlive.entities.enums.DictionaryKey.ACC_CONDITION))")
+    @Mapping(target = "services", expression = "java(extractDictionariesByKey(accommodation, pm.inlive.entities.enums.DictionaryKey.ACC_SERVICE))")
+    @Mapping(target = "conditions", expression = "java(extractDictionariesByKey(accommodation, pm.inlive.entities.enums.DictionaryKey.ACC_CONDITION))")
     @Mapping(target = "imageUrls", expression = "java(imageMapper.getPathToAccommodationImages(accommodation))")
     AccommodationResponse toDto(Accommodation accommodation, ImageMapper imageMapper);
 

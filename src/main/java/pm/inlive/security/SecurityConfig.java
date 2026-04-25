@@ -41,6 +41,8 @@ public class SecurityConfig {
     };
     @Value("${spring.application.client-id}")
     private String clientId;
+    @Value("${APP_ALLOWED_ORIGINS:http://localhost:3000,http://10.36.40.16:3000,http://localhost:3001,https://ui-tap-front.vercel.app,http://192.168.1.157:3000,http://63.178.189.113:3000}")
+    private String allowedOrigins;
     private final MessageSource messageSource;
 
     @Bean
@@ -59,7 +61,7 @@ public class SecurityConfig {
         http.exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(new CustomAccessDeniedHandler(messageSource))
         );
 
-        http.addFilterBefore(new CustomCorsFilter(), ChannelProcessingFilter.class);
+        http.addFilterBefore(new CustomCorsFilter(allowedOrigins), ChannelProcessingFilter.class);
 
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(WHITE_LIST_URL)

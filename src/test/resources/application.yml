@@ -1,0 +1,24 @@
+spring:
+  application:
+    keycloak-url: http://localhost:8182
+    realm: test-realm
+    client-id: inlive
+    client-secret: test-secret
+    username: test-admin
+    password: test-password
+    send-email: false
+    file-api:
+      name: file-api
+      url: http://localhost:8889
+  datasource:
+    url: jdbc:h2:mem:inlive;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+
+OAUTH2_ISSUER: http://localhost:8182/realms/test-realm
+OAUTH2_JWK: http://localhost:8182/realms/test-realm/protocol/openid-connect/certs

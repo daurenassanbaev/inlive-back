@@ -9,12 +9,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 public class CustomCorsFilter extends OncePerRequestFilter {
-    private final List<String> allowedOrigins = Arrays.asList("http://localhost:3000", "http://10.36.40.16:3000", "http://localhost:3001", "https://ui-tap-front.vercel.app", "http://192.168.1.157:3000", "http://63.178.189.113:3000/");
+    private final List<String> allowedOrigins;
+
+    public CustomCorsFilter(String allowedOrigins) {
+        this.allowedOrigins = Stream.of(allowedOrigins.split(","))
+                .map(String::trim)
+                .map(origin -> origin.endsWith("/") ? origin.substring(0, origin.length() - 1) : origin)
+                .filter(origin -> !origin.isBlank())
+                .collect(Collectors.toList());
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -23,7 +32,7 @@ public class CustomCorsFilter extends OncePerRequestFilter {
 
         String origin = request.getHeader("Origin");
 
-        if (allowedOrigins.contains(origin)) {
+        if (origin != null && allowedOrigins.contains(origin.endsWith("/") ? origin.substring(0, origin.length() - 1) : origin)) {
             response.setHeader("Access-Control-Allow-Origin", origin);
         }
 

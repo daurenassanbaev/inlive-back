@@ -48,6 +48,7 @@ dependencies {
     implementation(project(mapOf("path" to ":client-libs:inlive-file-manager")))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
+    testRuntimeOnly("com.h2database:h2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 }
