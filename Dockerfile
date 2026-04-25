@@ -42,8 +42,10 @@ WORKDIR /app
 
 RUN apk add --no-cache curl
 
+ENV JAVA_OPTS="-Dvertx.disableDnsResolver=true -Djava.net.preferIPv4Stack=true -XX:+UseG1GC -XX:InitialRAMPercentage=25 -XX:MaxRAMPercentage=75"
+
 # Copy the built jar from the build stage
 COPY --from=build /app/build/libs/*.jar app.jar
 
 # Set the entrypoint
-ENTRYPOINT ["java", "-Dvertx.disableDnsResolver=true", "-Djava.net.preferIPv4Stack=true", "-Xms4g","-Xmx4g","-XX:+UseG1GC", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

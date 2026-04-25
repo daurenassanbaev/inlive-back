@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @RequiredArgsConstructor
 @EnableConfigurationProperties
-@ComponentScan(basePackages = "ai.lab.inlivefilemanager.client")
+@ComponentScan(basePackages = "pm.inlivefilemanager.client")
 public class ClientConfiguration {
 
     private final KeycloakAuthService keycloakAuthService;

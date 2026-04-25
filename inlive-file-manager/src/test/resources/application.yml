@@ -1,0 +1,25 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8182/realms/test-realm
+          jwk-set-uri: http://localhost:8182/realms/test-realm/protocol/openid-connect/certs
+
+application:
+  realm: test-realm
+  keycloak-url: http://localhost:8182
+  client-id: inlive
+  config:
+    max-upload-count: 1000
+    max-request-size: 1073741824
+    max-in-mem-size: 1073741824
+
+aws:
+  region: eu-central-1
+  s3:
+    bucket: test-bucket
+  credentials:
+    access-key: test
+    secret-key: test
+    s3_end-pont: https://storage.yandexcloud.kz

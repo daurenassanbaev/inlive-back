@@ -3,7 +3,6 @@ package pm.inlive.mappers;
 import pm.inlive.dto.response.AccSearchRequestResponse;
 import pm.inlive.dto.response.DistrictResponse;
 import pm.inlive.dto.response.DictionaryResponse;
-import ai.lab.inlive.entities.*;
 import pm.inlive.entities.AccSearchRequest;
 import pm.inlive.entities.Dictionary;
 import pm.inlive.entities.District;
@@ -25,8 +24,8 @@ public interface AccSearchRequestMapper {
     @Mapping(target = "status", expression = "java(request.getStatus() != null ? request.getStatus().name() : null)")
     @Mapping(target = "unitTypes", expression = "java(extractUnitTypes(request))")
     @Mapping(target = "districts", expression = "java(extractDistricts(request))")
-    @Mapping(target = "services", expression = "java(extractDictionariesByKey(request, ai.lab.inlive.entities.enums.DictionaryKey.ACC_SERVICE))")
-    @Mapping(target = "conditions", expression = "java(extractDictionariesByKey(request, ai.lab.inlive.entities.enums.DictionaryKey.ACC_CONDITION))")
+    @Mapping(target = "services", expression = "java(extractDictionariesByKey(request, pm.inlive.entities.enums.DictionaryKey.ACC_SERVICE))")
+    @Mapping(target = "conditions", expression = "java(extractDictionariesByKey(request, pm.inlive.entities.enums.DictionaryKey.ACC_CONDITION))")
     AccSearchRequestResponse toDto(AccSearchRequest request);
 
     @Mapping(target = "key", expression = "java(dictionary.getKey().name())")

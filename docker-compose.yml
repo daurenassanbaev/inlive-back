@@ -55,6 +55,7 @@ services:
       - "8889:8888"
     environment:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_BUCKET=${AWS_BUCKET}
@@ -87,7 +88,7 @@ services:
     ports:
       - "5434:5432"
     volumes:
-      - pg18_inlive:/var/lib/postgresql   # 18+ expects this mount point
+      - pg18_inlive:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d inlive"]
       interval: 10s
@@ -107,7 +108,7 @@ services:
     ports:
       - "5435:5432"
     volumes:
-      - pg18_keycloak:/var/lib/postgresql # 18+ expects this mount point
+      - pg18_keycloak:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d keycloak"]
       interval: 10s
