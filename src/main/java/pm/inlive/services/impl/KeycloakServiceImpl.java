@@ -126,6 +126,9 @@ public class KeycloakServiceImpl implements KeycloakService {
 
     private void handleUnsuccessfulResponse(Response response) {
         if (response.getStatus() != 201) {
+            String error = response.readEntity(String.class);
+            log.error("KEYCLOAK ERROR: {}", error);
+
             log.info("response status: {}", response.getStatus());
             log.info("response entity: {}", response.getEntity());
             if (response.getStatus() == HttpStatus.CONFLICT.value()) {
