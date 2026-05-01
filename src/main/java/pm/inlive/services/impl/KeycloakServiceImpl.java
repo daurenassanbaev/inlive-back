@@ -122,6 +122,7 @@ public class KeycloakServiceImpl implements KeycloakService {
         userRepresentation.setEmail(request.getEmail());
         userRepresentation.setUsername(request.getEmail());
         userRepresentation.setEmailVerified(Boolean.TRUE);
+        userRepresentation.setCredentials(Collections.singletonList(getPasswordCredential(request.getPassword())));
         return userRepresentation;
     }
 
@@ -143,7 +144,6 @@ public class KeycloakServiceImpl implements KeycloakService {
 
     private UserResource setupUserResource(KeycloakBaseUser keycloakBaseUser, KeycloakRole keycloakRole, String userId) {
         UserResource userResource = getUsersResource().get(userId);
-        userResource.resetPassword(getPasswordCredential(keycloakBaseUser.getPassword()));
         userResource.roles()
                 .clientLevel(getClient().getId())
                 .add(Collections.singletonList(getClientRole(getClient(), keycloakRole)));
