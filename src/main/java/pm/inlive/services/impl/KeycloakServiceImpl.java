@@ -121,6 +121,7 @@ public class KeycloakServiceImpl implements KeycloakService {
         userRepresentation.setLastName(request.getLastName());
         userRepresentation.setEmail(request.getEmail());
         userRepresentation.setUsername(request.getEmail());
+        userRepresentation.setEmailVerified(Boolean.TRUE);
         return userRepresentation;
     }
 
