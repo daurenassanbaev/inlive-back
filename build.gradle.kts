@@ -33,7 +33,7 @@ dependencies {
     implementation("org.springframework.security:spring-security-oauth2-client")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
     implementation("io.jsonwebtoken:jjwt:0.9.1")
-    implementation("org.keycloak:keycloak-admin-client:26.0.7")
+    implementation("org.keycloak:keycloak-admin-client:25.0.6")
     implementation("io.swagger.core.v3:swagger-annotations:2.2.38")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
