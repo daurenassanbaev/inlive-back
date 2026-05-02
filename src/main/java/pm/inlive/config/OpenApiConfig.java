@@ -19,28 +19,14 @@ import java.util.List;
 
 @OpenAPIDefinition(
         info = @Info(
-                contact = @Contact(
-                        name = "CAIR Team",
-                        email = "ailab@sdu.edu.kz",
-                        url = "https://sdu.edu.kz/en/faculty-engineering/"
-                ),
-                description = "OpenApi documentation for InLive Hotel",
-                title = "OpenApi specification - CAIR Team",
-                version = "1.0",
-                license = @License(
-                        name = "MIT License",
-                        url = "https://opensource.org/license/mit/"
-                ),
-                termsOfService = "https://inlive-hotel.kz/terms"
+                description = "OpenApi documentation for InLive",
+                title = "OpenApi specification",
+                version = "1.0"
         ),
         servers = {
                 @Server(
                         description = "Local ENV",
                         url = "http://localhost:8080/api"
-                ),
-                @Server(
-                        description = "PROD ENV",
-                        url = "https://ui-tap.com/api"
                 )
         },
         security = {
