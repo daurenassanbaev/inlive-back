@@ -35,7 +35,7 @@ Gradle does not need to be installed separately: the project already includes `.
 
 Ready-to-use env files are stored in Google Drive:
 
-[Inlive env files - google form submit any files]()
+[Inlive env files - google form submit any files, not here]()
 
 The folder contains:
 
